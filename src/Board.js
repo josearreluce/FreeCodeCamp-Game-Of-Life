@@ -25,10 +25,10 @@ class Row extends React.Component {
 class Board extends React.Component {
 	render() {
 		var rows = [];
-		for(var i = 0; i < this.props.cells.length; i += 70) {
+		for(var i = 0; i < this.props.cells.length; i += this.props.width) {
 			var rowCells = [];
 			var indexes = [];
-			for(var j = i; j < i + 70; j++) {
+			for(var j = i; j < i + this.props.width; j++) {
 				rowCells.push(this.props.cells[j]);
 				indexes.push(j);
 			}

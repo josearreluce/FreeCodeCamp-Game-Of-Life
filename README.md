@@ -7,10 +7,12 @@ npm start
 ```
 
 Setup
----
+```
 npm install
-
+```
 
 Compile
-___
+
+```
 npm run compile
+```
