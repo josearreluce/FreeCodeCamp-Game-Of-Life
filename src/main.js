@@ -8,21 +8,34 @@ class App extends React.Component {
 	constructor () {
 		super();
 		this.changeSize = this.changeSize.bind(this);
+		this.generateNewBoard = this.generateNewBoard.bind(this);
 		this.state = {
+			cells: new Array(50 * 70),
 			height: 50,
 			width: 70
 		};
 	}
 
+	/* Changes the height and width of the board in state */
 	changeSize (height, width) {
+		this.generateNewBoard(height, width);
+	}
+
+	/* Creates a new board by randomly adding alive cells. */
+	generateNewBoard (height, width) {
+		var newCells = new Array(height * width);
+		for(var i = 0; i < newCells.length; i++) {
+			newCells[i] = Math.random() >= 0.5;
+		}
+
 		this.setState({
+			cells: newCells,
 			height: height,
 			width: width
 		});
 	}
 
 	render () {
-		var cells = new Array(this.state.width * this.state.height);
 		return(
 			<div>
 				<h1 className="text-center">
@@ -30,7 +43,7 @@ class App extends React.Component {
 				</h1>
 				<ControlMenu />
 				<Board height={this.state.height} width={this.state.width}
-					cells={cells}/>
+					cells={this.state.cells}/>
 				<SizeMenu changeSize={this.changeSize} />
 			</div>
 			);

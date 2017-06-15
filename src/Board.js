@@ -6,8 +6,14 @@ class Cell extends React.Component {
 		var cellHeight = Math.floor(450 / this.props.height);
 		var cellWidth = Math.floor(700 / this.props.width);
 
+		var backgroundColor = 'black';
+		if(this.props.cell) {
+				backgroundColor = 'red';
+		}
+
 		var cellStyle = {
-			border: "0.5px solid black",
+			background: backgroundColor,
+			border: "0.5px solid gray",
 			display: "inline-block",
 			height: String(cellHeight) + "px",
 			width: String(cellWidth) + "px"
