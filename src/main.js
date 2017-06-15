@@ -25,11 +25,11 @@ class App extends React.Component {
 		var cells = new Array(this.state.width * this.state.height);
 		return(
 			<div>
-				<h1 className="text-center"> 
-					Game of Life (ReactJS) 
+				<h1 className="text-center">
+					Game of Life (ReactJS)
 				</h1>
-				<ControlMenu />				
-				<Board height={this.state.height} width={this.state.width} 
+				<ControlMenu />
+				<Board height={this.state.height} width={this.state.width}
 					cells={cells}/>
 				<SizeMenu changeSize={this.changeSize} />
 			</div>
