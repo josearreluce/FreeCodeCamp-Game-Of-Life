@@ -17,7 +17,7 @@ class App extends React.Component {
 		this.pauseSimulation = this.pauseSimulation.bind(this);
 		this.state = {
 			cells: new Array(50 * 70),
-			generation: 0,
+			generation: -1,
 			height: 50,
 			paused: false,
 			speed: "medium",
@@ -28,6 +28,7 @@ class App extends React.Component {
 	/* Changes the height and width of the board in state */
 	changeSize (height, width) {
 		this.generateNewBoard(height, width);
+		this.runSimulation();
 	}
 
 	changeSpeed (speed) {
@@ -47,7 +48,7 @@ class App extends React.Component {
 	generateNewBoard (height, width) {
 		var newCells = new Array(height * width);
 		for(var i = 0; i < newCells.length; i++) {
-			newCells[i] = Math.random() >= 0.95;
+			newCells[i] = Math.random() >= 0.9;
 		}
 
 		this.setState({
@@ -104,35 +105,43 @@ class App extends React.Component {
 		}
 	}
 
+	produceNeighbors(i, w) {
+		var neighbors = [i + w, i + w - 1, i + w + 1,
+										 i - w, i - w - 1, i - w + 1,
+										 i + 1, i - 1];
+	  return neighbors;
+	}
+
 	simulateLife () {
-		if(this.state.generation === 0) {
+		if(this.state.generation === -1) {
 			this.generateNewBoard(this.state.height, this.state.width);
 		}
 
 		var cells = this.state.cells;
+		var newCells = [];
 		for(var i = 0; i < cells.length; i++) {
-			var neighbors = 0;
-			neighbors += this.countNeighbor(cells[i + this.state.width]);
-			neighbors += this.countNeighbor(cells[i + this.state.width + 1]);
-			neighbors += this.countNeighbor(cells[i + this.state.width - 1]);
-			neighbors += this.countNeighbor(cells[i - this.state.width]);
-			neighbors += this.countNeighbor(cells[i - this.state.width + 1]);
-			neighbors += this.countNeighbor(cells[i - this.state.width - 1]);
-			neighbors += this.countNeighbor(cells[i + 1]);
-			neighbors += this.countNeighbor(cells[i - 1]);
+			var neighborCount = 0;
+			var neighbors = this.produceNeighbors(i, this.state.width);
+			for(var j = 0; j < neighbors.length; j++) {
+				neighborCount += this.countNeighbor(cells[neighbors[j]]);
+			}
 
 			if(cells[i]) {
-				if(neighbors < 2 || neighbors > 3) {
-					cells[i] = false;
+				if(neighborCount < 2 || neighborCount > 3) {
+					newCells.push(false);
+				} else {
+					newCells.push(true);
 				}
 			} else {
-				if(neighbors === 2 || neighbors === 3) {
-					cells[i] = true;
+				if(neighborCount === 2 || neighborCount === 3) {
+					newCells.push(true);
+				} else {
+					newCells.push(false);
 				}
 			}
 		}
 
-		return cells;
+		return newCells;
 	}
 
 	//startSimulation needs updating
