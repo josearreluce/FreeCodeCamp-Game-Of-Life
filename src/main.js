@@ -10,8 +10,10 @@ class App extends React.Component {
 		this.changeSize = this.changeSize.bind(this);
 		this.changeSpeed = this.changeSpeed.bind(this);
 		this.clearSimulation = this.clearSimulation.bind(this);
+		this.countNeighbor = this.countNeighbor.bind(this);
 		this.generateNewBoard = this.generateNewBoard.bind(this);
 		this.runSimulation = this.runSimulation.bind(this);
+		this.simulateLife = this.simulateLife.bind(this);
 		this.pauseSimulation = this.pauseSimulation.bind(this);
 		this.state = {
 			cells: new Array(50 * 70),
@@ -45,7 +47,7 @@ class App extends React.Component {
 	generateNewBoard (height, width) {
 		var newCells = new Array(height * width);
 		for(var i = 0; i < newCells.length; i++) {
-			newCells[i] = Math.random() >= 0.8;
+			newCells[i] = Math.random() >= 0.95;
 		}
 
 		this.setState({
@@ -71,16 +73,18 @@ class App extends React.Component {
 			}
 
 			var currentGen = App.state.generation;
+			var cells = App.simulateLife();
 			App.setState({
+				cells: cells,
 				generation: currentGen + 1
 			});
 		}
 
-		var speed = 100;
+		var speed = 1000;
 		if(App.state.speed === "slow") {
-			speed = 1000;
+			speed = 10000;
 		} else if (App.state.speed === "fast") {
-			speed = 10;
+			speed = 100;
 		}
 
 		setInterval(updateGeneration, speed);
@@ -90,6 +94,45 @@ class App extends React.Component {
 		this.setState({
 			paused: true
 		});
+	}
+
+	countNeighbor (cell) {
+		if(cell) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+	simulateLife () {
+		if(this.state.generation === 0) {
+			this.generateNewBoard(this.state.height, this.state.width);
+		}
+
+		var cells = this.state.cells;
+		for(var i = 0; i < cells.length; i++) {
+			var neighbors = 0;
+			neighbors += this.countNeighbor(cells[i + this.state.width]);
+			neighbors += this.countNeighbor(cells[i + this.state.width + 1]);
+			neighbors += this.countNeighbor(cells[i + this.state.width - 1]);
+			neighbors += this.countNeighbor(cells[i - this.state.width]);
+			neighbors += this.countNeighbor(cells[i - this.state.width + 1]);
+			neighbors += this.countNeighbor(cells[i - this.state.width - 1]);
+			neighbors += this.countNeighbor(cells[i + 1]);
+			neighbors += this.countNeighbor(cells[i - 1]);
+
+			if(cells[i]) {
+				if(neighbors < 2 || neighbors > 3) {
+					cells[i] = false;
+				}
+			} else {
+				if(neighbors === 2 || neighbors === 3) {
+					cells[i] = true;
+				}
+			}
+		}
+
+		return cells;
 	}
 
 	//startSimulation needs updating
