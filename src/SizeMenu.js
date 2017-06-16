@@ -32,13 +32,16 @@ class SpeedMenu extends React.Component {
 		return (
 			<div className="row">
 				<div className="col-md-8 col-md-offset-2 text-center">
-					<button className="btn btn-default">
+					<button className="btn btn-default" id="slow"
+									onClick={(e) => this.props.changeSpeed(e.target.id)}>
 						Slow
 					</button>
-					<button className="btn btn-default">
+					<button className="btn btn-default" id="medium"
+									onClick={(e) => this.props.changeSpeed(e.target.id)}>
 						Medium
 					</button>
-					<button className="btn btn-default">
+					<button className="btn btn-default" id="fast"
+									onClick={(e) => this.props.changeSpeed(e.target.id)}>
 						Fast
 					</button>
 				</div>
@@ -68,8 +71,8 @@ class SimMenu extends React.Component {
 	render () {
 		return (
 			<div>
-				<SizeMenu handleClick={this.handleClick}/>
-				<SpeedMenu />
+				<SizeMenu handleClick={this.handleClick} />
+				<SpeedMenu changeSpeed={this.props.changeSpeed} />
 			</div>
 		);
 	}
