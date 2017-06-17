@@ -4,6 +4,40 @@ var Board = require('./Board.js');
 var ControlMenu = require('./ControlMenu.js');
 var SimMenu = require('./SizeMenu.js');
 
+function generateNewBoard (height, width) {
+	var newCells = new Array(height * width);
+	for(var i = 0; i < newCells.length; i++) {
+		newCells[i] = Math.random() >= 0.95;
+	}
+
+	return newCells;
+}
+
+function simulation (App, paused, generation, simulationFunction, speed) {
+	function updateGeneration (paused, generation, simulationFunction) {
+		if(paused) {
+			clearInterval();
+			return;
+		}
+
+		var currentGen = generation + 1;
+		var cells = simulationFunction();
+		App.setState({
+			cells: cells,
+			generation: currentGen
+		});
+	}
+
+	var speed = 1000;
+	if(speed === "slow") {
+		speed = 10000;
+	} else if (speed === "fast") {
+		speed = 100;
+	}
+
+	setInterval(updateGeneration, speed);
+}
+
 class App extends React.Component {
 	constructor () {
 		super();
@@ -11,23 +45,25 @@ class App extends React.Component {
 		this.changeSpeed = this.changeSpeed.bind(this);
 		this.clearSimulation = this.clearSimulation.bind(this);
 		this.countNeighbor = this.countNeighbor.bind(this);
-		this.generateNewBoard = this.generateNewBoard.bind(this);
+		this.newBoard = this.newBoard.bind(this);
 		this.runSimulation = this.runSimulation.bind(this);
 		this.simulateLife = this.simulateLife.bind(this);
 		this.pauseSimulation = this.pauseSimulation.bind(this);
+
+		var cellsBoard = generateNewBoard(50,70);
 		this.state = {
-			cells: new Array(50 * 70),
-			generation: -1,
+			cells: cellsBoard,
+			generation: 0,
 			height: 50,
 			paused: false,
 			speed: "medium",
 			width: 70
-		};
+		}
 	}
 
 	/* Changes the height and width of the board in state */
 	changeSize (height, width) {
-		this.generateNewBoard(height, width);
+		this.newBoard(height, width);
 		this.runSimulation();
 	}
 
@@ -45,11 +81,8 @@ class App extends React.Component {
 	}
 
 	/* Creates a new board by randomly adding alive cells. */
-	generateNewBoard (height, width) {
-		var newCells = new Array(height * width);
-		for(var i = 0; i < newCells.length; i++) {
-			newCells[i] = Math.random() >= 0.9;
-		}
+	newBoard (height, width) {
+		var newCells = generateNewBoard(height, width);
 
 		this.setState({
 			cells: newCells,
@@ -113,10 +146,6 @@ class App extends React.Component {
 	}
 
 	simulateLife () {
-		if(this.state.generation === -1) {
-			this.generateNewBoard(this.state.height, this.state.width);
-		}
-
 		var cells = this.state.cells;
 		var newCells = [];
 		for(var i = 0; i < cells.length; i++) {

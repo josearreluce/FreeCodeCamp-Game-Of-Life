@@ -3,6 +3,7 @@ var ReactDOM = require('react-dom');
 
 class ControlMenu extends React.Component {
 	render () {
+		var generation = this.props.generation === -1 ? 0 : this.props.generation;
 		return (
 			<div className="row">
 				<div className="col-md-8 col-md-offset-2 text-center">
@@ -18,7 +19,7 @@ class ControlMenu extends React.Component {
 									onClick={this.props.clearSim} type="button">
 						Clear
 					</button>
-					<span> Generation: {this.props.generation} </span>
+					<span> Generation: {generation} </span>
 				</div>
 			</div>
 		);
