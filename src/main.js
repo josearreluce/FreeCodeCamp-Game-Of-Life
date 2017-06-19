@@ -13,31 +13,6 @@ function generateNewBoard (height, width) {
 	return newCells;
 }
 
-function simulation (App, paused, generation, simulationFunction, speed) {
-	function updateGeneration (paused, generation, simulationFunction) {
-		if(paused) {
-			clearInterval();
-			return;
-		}
-
-		var currentGen = generation + 1;
-		var cells = simulationFunction();
-		App.setState({
-			cells: cells,
-			generation: currentGen
-		});
-	}
-
-	var speed = 1000;
-	if(speed === "slow") {
-		speed = 10000;
-	} else if (speed === "fast") {
-		speed = 100;
-	}
-
-	setInterval(updateGeneration, speed);
-}
-
 class App extends React.Component {
 	constructor () {
 		super();
@@ -59,6 +34,10 @@ class App extends React.Component {
 			speed: "medium",
 			width: 70
 		}
+	}
+
+	componentDidMount() {
+		this.runSimulation();
 	}
 
 	/* Changes the height and width of the board in state */
